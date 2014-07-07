@@ -1,0 +1,5 @@
+.clearer.ie9fix {height:15px !important;line-height:15px !important;}
+#featured-wrapper .category {position: relative;top:-6px;left:-4px;background:#444;}
+#featured-wrapper .stars, #featured-wrapper .number, #featured-wrapper .letter {position:absolute;top:0px;right:0px;display:block;height:28px;}
+#sharebox-wrapper {position: fixed;left:0px;top:90px;}
+#sharebox {background:#F3F3F3;border-right:1px solid #CFCFCF;}
