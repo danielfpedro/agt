@@ -54,7 +54,7 @@
 	                        	<?php
 	                        		$img_url = ''.
 	                        			'Estabelecimentos/'.
-	                        			$estabelecimento['Estabelecimento']['id'] . '/' .
+	                        			$estabelecimento['Estabelecimento']['slug'] . '/' .
 	                        			$estabelecimento['Estabelecimento']['imagem_300x170'];
 	                        		$img = $this->Html->image(
 	                        			$img_url,
@@ -143,20 +143,14 @@
 		</div><!-- main-content-left -->
 
 		<div class="sidebar">
-			<div class="unwrapped">
-				<?php
-					echo $this->Html->image('banners/banner1.jpg', array('url'=>'#', 'width'=> '300px', 'height'=> '420px'));
-				?>
-			</div><!-- unwrapped -->
+			
+			<?php echo $this->element('Site/banner1'); ?>
 
 			<!-- Widget lateral dos estabelecimentos -->
 			<?php echo $this->element('Site/widget_estabelecimentos'); ?>
 
-			<div class="unwrapped">
-				<?php
-					echo $this->Html->image('banners/banner2.png', array('url'=>'#'));
-				?>
-			</div><!-- unwrapped -->
+			<?php echo $this->element('Site/banner2'); ?>
+
 			<div class="unwrapped">
 				<?php
 					echo $this->element('Site/facebook_like_box');

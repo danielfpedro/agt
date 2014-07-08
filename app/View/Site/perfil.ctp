@@ -74,14 +74,14 @@
 										<?php
 											$img_url = ''.
 												'Estabelecimentos/'.
-												$estabelecimento['Estabelecimento']['id'] . '/' .
-												$value;
+												$estabelecimento['Estabelecimento']['slug'] . '/' .
+												$value['normal'];
 										?>										
 										<a
 											id="foto-troca"
 											data-rel="<?php echo $i; ?>"
 											style="<?php echo ($i > 0)? 'display: none;': '';?>"
-											href="<?php echo $this->webroot . 'img/Estabelecimentos/' . $estabelecimento['Estabelecimento']['id'] .'/zoom_' .$value; ?>" class="darken">
+											href="<?php echo $this->webroot . 'img/Estabelecimentos/' . $estabelecimento['Estabelecimento']['slug'] .'/' .$value['zoom']; ?>" class="darken">
 											<?php
 												echo $this->Html->image($img_url, array('height'=> '145px', 'style'=> 'margin-bottom: -5px;'));
 											?>
@@ -284,20 +284,13 @@
 		</div><!-- main-content-left -->
 
 		<div class="sidebar">
-			<div class="unwrapped">
-				<?php
-					echo $this->Html->image('banners/banner1.jpg', array('url'=>'#', 'width'=> '300px', 'height'=> '420px'));
-				?>
-			</div><!-- unwrapped -->
+			
+			<?php echo $this->element('Site/banner1'); ?>
 
 			<!-- Widget lateral dos estabelecimentos -->
 			<?php echo $this->element('Site/widget_estabelecimentos'); ?>
 
-			<div class="unwrapped">
-				<?php
-					echo $this->Html->image('banners/banner2.png', array('url'=>'#'));
-				?>
-			</div><!-- unwrapped -->
+			<?php echo $this->element('Site/banner2'); ?>
 
 			<div class="unwrapped">
 				<?php

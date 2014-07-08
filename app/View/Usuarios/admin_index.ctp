@@ -31,7 +31,6 @@
 				<tr>
 					<th style="width: 60px;"></th>
 					<th>
-						<?php echo $this->Paginator->sort('email', 'Nome/Email'); ?>
 					</th>
 					<th>
 						<?php echo $this->Paginator->sort('cidade'); ?>

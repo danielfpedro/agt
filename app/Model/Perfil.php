@@ -23,34 +23,21 @@ class Perfil extends AppModel {
 	 * @return void
 	 */
 		public function afterSave($created, $options = array()) {
-			if (!$created) {
-				if ($this->data['Perfil']['imagem_array']['error'] == 0) {
-					$image = WideImage::load($this->data['Perfil']['imagem_array']['tmp_name']);
-					$pasta_salvar = new Folder(WWW_ROOT . 'img' . DS . 'Usuarios/' . $this->data['Perfil']['usuario_id'], true, 0755);
-					$image
-						->resize(60, 60, 'outside')
-						->crop('center', 'center', 60, 60)
-						->saveToFile($pasta_salvar->path . DS . $this->data['Perfil']['imagem'], 85);
-				}
-			}
+
 		}
 	
 
 	public function beforeSave($options = array()) {
-		
-
-		// Se nao upou imagem ele unseta
-		// if (isset($this->data['Perfil']['imagem'])) {
-		// 	if ($this->data['Perfil']['imagem']['error'] > 0) {
-		// 		unset($this->data['Perfil']['imagem']);
-		// 	} else {
-		// 		$this->data['Perfil']['imagem'] = $this->data['Perfil']['imagem']['name'];
-		// 	}
-			
-		// }
 
 		if (!empty($this->data['Perfil']['imagem'])) {
-			$this->data['Perfil']['imagem_array'] = $this->data['Perfil']['imagem'];
+
+			$image = WideImage::load($this->data['Perfil']['imagem']['tmp_name']);
+			$pasta_salvar = new Folder(WWW_ROOT . 'img' . DS . 'Usuarios/' . $this->data['Perfil']['usuario_id'], true, 0755);
+			$image
+				->resize(60, 60, 'outside')
+				->crop('center', 'center', 60, 60)
+				->saveToFile($pasta_salvar->path . DS . $this->data['Perfil']['imagem']['name'], 85);
+
 			$this->data['Perfil']['imagem'] = $this->data['Perfil']['imagem']['name'];
 		}
 
@@ -94,6 +81,22 @@ class Perfil extends AppModel {
 			return true;
 		}
 	}
+
+	/**
+	 * beforeValidate callback
+	 *
+	 * @param $options array
+	 * @return boolean
+	 */
+		public function beforeValidate($options = array()) {
+			if (!empty($this->data['Perfil']['usuario_id'])) {
+				if ($this->data['Perfil']['imagem']['error'] == 4) {
+					unset($this->data['Perfil']['imagem']);
+				}
+			}
+			return true;
+		}
+		
 
 	// public function isUniqueOnUpdate($fields) {
 	// 	$options['conditions'] = array(
@@ -159,11 +162,15 @@ class Perfil extends AppModel {
 				'rule'=> array('extension', array('jpg', 'jpeg', 'png')),
 				'message'=> 'A imagem deve estar no formato JPG ou PNG',
 				'required'=> false,
+				'allowEmpty'=> true,
 				'on'=> 'update'
 			),
 			'fileSize'=> array(
 				'rule' => array('fileSize', '<=', '1MB'),
-				'message'=> 'A imagem de conter no máximo 1MB'
+				'message'=> 'A imagem de conter no máximo 1MB',
+				'required'=> false,
+				'allowEmpty'=> true,
+				'on'=> 'update'
 			)
 		),
 		'usuario_id' => array(

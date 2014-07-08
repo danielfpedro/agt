@@ -76,13 +76,19 @@ class Estabelecimento extends AppModel {
 	public function uploadImage($image_array, $name, $w, $h, $pasta_salvar) {
 
 		$image = WideImage::load($image_array['tmp_name']);
-		$extension = pathinfo($image_array['name'], PATHINFO_EXTENSION);
+		$extension = strtolower(pathinfo($image_array['name'], PATHINFO_EXTENSION));
 
-		$new_name = $name . '-'.$w.'x'.$h.'.' . $extension;
+		if ($extension == 'jpg' OR $extension == 'jpeg') {
+			$compression = 85;
+		} else {
+			$compression = 8;
+		}
+
+		$new_name = strtolower($name . '-'.$w.'x'.$h.'.' . $extension);
 		$image
 			->resize($w, $h, 'outside')
 			->crop('center', 'center', $w, $h)
-			->saveToFile($pasta_salvar->path . DS . $new_name, 85);
+			->saveToFile($pasta_salvar->path . DS . $new_name, $compression);
 		$this->data['Estabelecimento'][$name . '_' .$w.'x'.$h.''] = $new_name;
 	}
 

@@ -44,10 +44,7 @@ class Usuario extends AppModel {
 
 	public function confirma_senha_atual($field) {
 		if (!empty($this->data['Usuario']['nova_senha'])) {
-			$passwordHasher = new SimplePasswordHasher(array('hashType' => 'sha256'));
-			$senha = $passwordHasher->hash(
-				$field['senha']
-			);
+			$senha = AuthComponent::password($field['senha']);
 			$options['conditions'] = array(
 				'Usuario.id'=> $this->data['Usuario']['id'],
 				'Usuario.senha'=> $senha

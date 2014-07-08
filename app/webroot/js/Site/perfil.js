@@ -57,7 +57,7 @@ $(function(){
 
 					var media_wrap = $('<div/>').addClass('media-wrap');
 					var media_thumb = $('<div/>').addClass('media-thumb');
-					var thumb = $('<img/>').attr({src: webroot +'/img/'+ value.Usuario.Perfil.imagem_final});
+					var thumb = $('<img/>').attr({src: value.Usuario.Perfil.imagem_final, width: 60});
 
 					var media_body = $('<div/>').addClass('media-body').css({width: '560px'});
 						var h4 = $('<h4/>').text(value.Usuario.Perfil.apelido);

@@ -10,7 +10,9 @@ App::uses('Folder', 'Utility');
  *
  */
 class SiteController extends AppController {
+
 	public $layout = 'Site/default';
+
 
 	public $components = array(
 		'Auth'=> array(
@@ -32,17 +34,33 @@ class SiteController extends AppController {
 					'fields'=> array(
 						'username'=> 'email',
 						'password'=> 'senha'
-					)
+					),
+					'scope' => array('ativo' => 1)
 				)
 			)
 		),
 		'Paginator', 'DataUtil');
 
-	/**
-	 * beforeFilter callback
-	 *
-	 * @return void
-	 */
+
+	public function _getBanners() {
+		$this->loadModel('Anuncio');
+		$this->Anuncio->recursive = -1;
+		$options = array();
+
+		$options['conditions'] = array('Anuncio.ativo'=> 1, 'Anuncio.id'=> 1);
+		$banner1 = $this->Anuncio->find('first', $options);
+
+		$options['conditions'] = array('Anuncio.ativo'=> 1, 'Anuncio.id'=> 2);
+		$banner2 = $this->Anuncio->find('first', $options);
+
+		$options['conditions'] = array('Anuncio.ativo'=> 1, 'Anuncio.id'=> 3);
+		$banner3 = $this->Anuncio->find('first', $options);
+
+		$this->set(compact('banner1'));
+		$this->set(compact('banner2'));
+		$this->set(compact('banner3'));
+	}
+
 	public function beforeFilter() {
 		parent::beforeFilter();
 		//$this->_checkLogin();
@@ -51,6 +69,8 @@ class SiteController extends AppController {
 
 		$this->set('loggedIn', $this->Auth->loggedIn());
 		$this->set('AuthUser', $this->Auth->user());
+
+		$banners = $this->_getBanners();
 	}
 
 	public function _checkLogin(){
@@ -93,7 +113,10 @@ class SiteController extends AppController {
 				'recursive'=> -1,
 				'fields'=> array('CategoriasEstabelecimento.estabelecimento_id'),
 				'conditions'=> array(
-					'CategoriasEstabelecimento.categoria_id'=> 1)
+					'CategoriasEstabelecimento.categoria_id'=> 1
+				),
+				'order'=> 'rand()',
+				'limit'=> 1
 			)
 		);
 		$idsBoate = $this->_acertaIds($query);
@@ -113,7 +136,9 @@ class SiteController extends AppController {
 				'conditions'=> array(
 					'CategoriasEstabelecimento.categoria_id'=> 2,
 					'CategoriasEstabelecimento.estabelecimento_id !='=> $idsBoate
-				)
+				),
+				'order'=> 'rand()',
+				'limit'=> 1
 			)
 		);
 		$idsRestaurante = $this->_acertaIds($query);
@@ -130,13 +155,17 @@ class SiteController extends AppController {
 					'CategoriasEstabelecimento.categoria_id'=> 3,
 					'CategoriasEstabelecimento.estabelecimento_id !='=> $idsRestaurante,
 					'CategoriasEstabelecimento.estabelecimento_id !='=> $idsBoate
-				)
+				),
+				'order'=> 'rand()',
+				'limit'=> 1
 			)
 		);
+
 		$idsBar = $this->_acertaIds($query);
 
 		$options['conditions'] = array('Estabelecimento.id'=> $idsBar);
 		$bar = $this->Estabelecimento->find('first', $options);
+
 
 
 		$options = array();
@@ -176,7 +205,7 @@ class SiteController extends AppController {
 			$carrossel[$i]['target'] = $value['Destaque']['target'];
 			} else {
 				$carrossel[$i]['titulo'] = $value['Estabelecimento']['name'];
-				$carrossel[$i]['imagem'] = 'Estabelecimentos/' . $value['Destaque']['estabelecimento_id'] . '/' . $value['Estabelecimento']['imagem_540x390'];
+				$carrossel[$i]['imagem'] = 'Estabelecimentos/' . $value['Estabelecimento']['slug'] . '/' . $value['Estabelecimento']['imagem_540x390'];
 				$carrossel[$i]['link'] = array('controller'=> 'site', 'action'=> 'perfil', $value['Estabelecimento']['slug']);
 			$carrossel[$i]['target'] = '_self';
 			}
@@ -355,6 +384,7 @@ class SiteController extends AppController {
 
 		$this->autoRender = false;
 	}
+
 	public function perfil($slug = null) {
 		$this->loadModel('Comentario');
 
@@ -368,13 +398,18 @@ class SiteController extends AppController {
 		if (empty($estabelecimento)) {
 			throw new NotFoundException('Este estabelecimento não existe.');
 		} else {
-			$estabelecimento['Estabelecimento']['imagem_loop'][] = $estabelecimento['Estabelecimento']['imagem_300x170'];
+			$estabelecimento['Estabelecimento']['imagem_loop'][0]['normal'] = $estabelecimento['Estabelecimento']['imagem_300x170'];
+			$estabelecimento['Estabelecimento']['imagem_loop'][0]['zoom'] = $estabelecimento['Estabelecimento']['imagem_800x600'];
 
+			$i = 1;
 			if (!empty($estabelecimento['Estabelecimento']['imagem2_300x170'])) {
-				$estabelecimento['Estabelecimento']['imagem_loop'][] = $estabelecimento['Estabelecimento']['imagem2_300x170'];
+				$estabelecimento['Estabelecimento']['imagem_loop'][$i]['normal'] = $estabelecimento['Estabelecimento']['imagem2_300x170'];
+				$estabelecimento['Estabelecimento']['imagem_loop'][$i]['zoom'] = $estabelecimento['Estabelecimento']['imagem2_800x600'];
+				$i++;
 			}
 			if (!empty($estabelecimento['Estabelecimento']['imagem3_300x170'])) {
-				$estabelecimento['Estabelecimento']['imagem_loop'][] = $estabelecimento['Estabelecimento']['imagem3_300x170'];
+				$estabelecimento['Estabelecimento']['imagem_loop'][$i]['normal'] = $estabelecimento['Estabelecimento']['imagem3_300x170'];
+				$estabelecimento['Estabelecimento']['imagem_loop'][$i]['zoom'] = $estabelecimento['Estabelecimento']['imagem3_800x600'];
 			}
 		}
 
@@ -626,7 +661,12 @@ class SiteController extends AppController {
 
 			if ($this->Usuario->saveAll($this->request->data)) {
 				$this->Session->setFlash('Cadastro <strong>realizado</strong> com sucesso!', 'default', array('class'=> 'alert alert-success'));
-				$this->Auth->login(array('id'=> $this->Usuario->id));
+				$this->Auth->login(array(
+					'id'=> $this->Usuario->id,
+					'Perfil'=> array(
+						'id'=> $this->Usuario->Perfil->id,
+						'name'=> $this->request->data['Perfil']['name']
+					)));
 				return $this->redirect(array('action'=> 'home'));
 			} else {
 				$errors_usuario = $this->Usuario->validationErrors;
@@ -735,6 +775,12 @@ class SiteController extends AppController {
 
 			if ($this->Usuario->saveAll($this->request->data)) {
 				$this->Session->setFlash('As suas alterações foram realizadas com sucesso.', 'default', array('class'=> 'alert alert-success'));
+				$this->Auth->login(array(
+					'id'=> $this->Usuario->id,
+					'Perfil'=> array(
+						'name'=> $this->request->data['Perfil']['name'],
+						'id'=> $this->request->data['Perfil']['id']
+					)));
 				return $this->redirect($this->referer());
 			} else {
 				$errors_usuario = $this->Usuario->validationErrors;
@@ -757,12 +803,13 @@ class SiteController extends AppController {
 		$this->Usuario->recursive = -1;
 		$options['contain'] = array('Perfil'=> array(
 			'fields'=> array(
-				'id', 'name', 'apelido', 'data_nascimento', 'cidade', 'imagem'
+				'id',
+				'name','apelido', 'data_nascimento', 'cidade', 'imagem'
 			)
 		));
 		$this->Usuario->virtualFields['data_nascimento_formatada'] = $this->Usuario->Perfil->virtualFields['data_nascimento_formatada'];
 		$options['fields'] = array(
-			'email',
+			'email', 'facebook_id',
 			'data_nascimento_formatada'
 		);
 		$options['conditions'] = array('Usuario.id'=> $this->Auth->user('id'));
@@ -773,12 +820,13 @@ class SiteController extends AppController {
 		$this->request->data['Perfil']['data_nascimento'] = $usuario['Usuario']['data_nascimento_formatada'];
 
 		if (!empty($usuario['Perfil']['imagem'])) {
-			$img_avatar = 'Usuarios/' . $usuario['Usuario']['id'] . '/' . $usuario['Perfil']['imagem'];
-		}elseif (!empty($usuario['facebook_id'])) {
+			$img_avatar = 'Usuarios/' . $this->Auth->user('id') . '/' . $usuario['Perfil']['imagem'];
+		}elseif (!empty($usuario['Usuario']['facebook_id'])) {
 			$img_avatar = 'https://graph.facebook.com/' . $usuario['Usuario']['facebook_id'] . '/picture?type=normal';
 		} else {
 			$img_avatar = 'Usuarios/default_avatar.png';
 		}
+			
 		$this->set(compact('img_avatar'));
 		
 		// Debugger::dump($this->Auth->user('email'));
@@ -1009,6 +1057,9 @@ class SiteController extends AppController {
 	}
 
 	public function login(){
+		$widget_estabelecimentos = $this->_getWidgetEstabelecimentos();
+		$this->set(compact('widget_estabelecimentos'));
+
 		$title_for_layout = 'Entrar - ' . $this->site_name;
 		$this->set(compact('title_for_layout'));
 

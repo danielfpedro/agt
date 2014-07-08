@@ -14,13 +14,13 @@ comments ele perde o estilo pq o estilo estah no id -->
 						);
 					?>
 				
-					<?php if (!empty($auth_custom)): ?>
-				<p class="logged-in-as">
-						Logado como <strong><?php echo $auth_custom['nome']; ?></strong>,
-						<?php
-							echo $this->Html->link('deseja sair?', array('controller' => 'site', 'action' => 'logout'));
-						?>
-					</p>
+					<?php if (!empty($loggedIn)): ?>
+						<p class="logged-in-as">
+							Logado como <strong><?php echo $AuthUser['Perfil']['name']; ?></strong>,
+							<?php
+								echo $this->Html->link('deseja sair?', array('controller' => 'site', 'action' => 'logout'));
+							?>
+						</p>
 					<?php else: ?>
 						Você precisa estar logado para comentar,
 						<?php
@@ -88,9 +88,7 @@ comments ele perde o estilo pq o estilo estah no id -->
 			<?php foreach ($comentarios as $comentario): ?>
 				<div class="media-wrap">
 					<div class="media-thumb">
-						<?php
-							echo $this->Html->image($comentario['Usuario']['Perfil']['imagem_final'], $options = array('width'=> 60, 'height'=> 60));
-						?>
+						<img src="<?php echo $comentario['Usuario']['Perfil']['imagem_final']; ?>" width="60">
 					</div>
 					<div class="media-body" style="width: 560px;">
 						<h4>

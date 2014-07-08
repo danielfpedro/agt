@@ -49,13 +49,19 @@ class Categoria extends AppModel {
 	public function uploadImage($image_array, $w, $h, $pasta_salvar) {
 
 		$image = WideImage::load($image_array['tmp_name']);
-		$extension = pathinfo($image_array['name'], PATHINFO_EXTENSION);
+		$extension = strtolower(pathinfo($image_array['name'], PATHINFO_EXTENSION));
 
-		$new_name = $this->data['Categoria']['slug'] . '.' . $extension;
+		if ($extension == 'jpg' OR $extension == 'jpeg') {
+			$compression = 85;
+		} else {
+			$compression = 8;
+		}
+		$new_name = strtolower($this->data['Categoria']['slug']) . '.' . $extension;
+
 		$image
 			->resize($w, $h, 'outside')
 			->crop('center', 'center', $w, $h)
-			->saveToFile($pasta_salvar->path . DS . $new_name, 85);
+			->saveToFile($pasta_salvar->path . DS . $new_name, $compression);
 		$this->data['Categoria']['imagem'] = $new_name;
 	}
 

@@ -38,10 +38,10 @@
 										);
 										$perfil_img = ''.
 											'Estabelecimentos/' .
-											$item['Estabelecimento']['id'] . '/' .
+											$item['Estabelecimento']['slug'] . '/' .
 											$item['Estabelecimento']['imagem_70x70'];
 
-										$categoria_img = 'icones_categorias/' . $item['Categoria']['imagem'];
+										$categoria_img = 'Categorias/' . $item['Categoria']['imagem'];
 									?>
 									<li>
 										<div class="icon" style="background-color:#cf6925">

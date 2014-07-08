@@ -78,7 +78,7 @@
 				
 				<?php $i = 1; ?>
 				<?php foreach ($destaques as $key => $value): ?>
-					<?php if (!empty($value)): ?>
+					<?php if (!empty($value['Estabelecimento']['name'])): ?>
 						<?php
 							$url_mais = array(
 								'controller' => 'site',
@@ -110,7 +110,7 @@
 										$value['Estabelecimento']['slug']);
 									$image = $this->Html->image(
 										'Estabelecimentos/' .
-										$value['Estabelecimento']['id'] . '/' .
+										$value['Estabelecimento']['slug'] . '/' .
 										$value['Estabelecimento']['imagem_300x170']);
 
 									echo $this->Html->link($image, $perfil_url, array('escape'=> false));
@@ -179,37 +179,22 @@
 
 			<br class="clearer" />
 
-			<div id="homepage-widgets"> <!--Container do Banner horizontal do final -->
-				<div class="widget"><!--Banner horizontal do final -->
-					<div class="textwidget">
-						<p>
-							<?php echo $this->Html->image(
-								'banners/banner3.jpg',
-								array('alt'=> 'ad', 'url'=> 'google.com')); ?>
-						</p>
-					</div>
-				</div><!--Banner horizontal do final -->
-			</div> <!--Container do Banner horizontal do final -->
+
+			<?php echo $this->element('Site/banner3'); ?>
 
 		</div><!-- main-content-left -->
 
 		<div class="sidebar">
-			<div class="unwrapped">
-				<?php
-					echo $this->Html->image('banners/banner1.jpg', array('url'=>'#', 'width'=> '300px', 'height'=> '420px'));
-				?>
-			</div><!-- unwrapped -->
+			
+			<?php echo $this->element('Site/banner1'); ?>
 
 			<!-- Widget lateral dos estabelecimentos -->
 			<div style="margin-top: -20px;">
 				<?php echo $this->element('Site/widget_estabelecimentos'); ?>
 			</div>
 
-			<div class="unwrapped">
-				<?php
-					echo $this->Html->image('banners/banner2.png', array('url'=>'#'));
-				?>
-			</div><!-- unwrapped -->
+			<?php echo $this->element('Site/banner2'); ?>
+
 			<div class="unwrapped">
 				<?php
 					echo $this->element('Site/facebook_like_box');

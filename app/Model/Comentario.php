@@ -23,7 +23,7 @@ class Comentario extends AppModel {
 				)
 			)
 		);
-		$options['condition'] = array(
+		$options['conditions'] = array(
 				'Comentario.ativo'=> 1,
 				'Comentario.estabelecimento_id'=> $estabelecimento_id
 			);
@@ -31,14 +31,17 @@ class Comentario extends AppModel {
 		$options['offset'] = $offset;
 		$options['order'] = array('Comentario.created'=> 'desc');
 
+
 		$query = $this->find('all', $options);
 
 		$comentarios = array();
 		$i = 0;
 		foreach ($query as $row) {
+			$img_url = '';
 			if (!empty($row['Usuario']['Perfil']['imagem'])) {
 				$img_url = ''.
-					'Usuarios/' . 
+					Router::url('/', true) . 
+					'img/Usuarios/' . 
 					$row['Usuario']['id'] .
 					'/' . 
 					$row['Usuario']['Perfil']['imagem'];
@@ -48,7 +51,7 @@ class Comentario extends AppModel {
 					'/picture?type=normal';
 				
 			} else {
-				$img_url = 'Usuarios/default_avatar.png';
+				$img_url = Router::url('/')	 . 'img/Usuarios/default_avatar.png';
 			}
 
 			$row['Usuario']['Perfil']['imagem_final'] = $img_url;

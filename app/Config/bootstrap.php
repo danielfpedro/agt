@@ -63,6 +63,7 @@ Cache::config('default', array('engine' => 'File'));
 // Alteração do inflector
 $_uninflected = array('atlas', 'lapis', 'onibus', 'pires', 'virus', '.*x', 'status');
 $_pluralIrregular = array(
+	'newsletter'=> 'newsletters',
 	'abdomens' => 'abdomen',
 	'alemao' => 'alemaes',
 	'artesa' => 'artesaos',

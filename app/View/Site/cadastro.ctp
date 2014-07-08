@@ -62,7 +62,7 @@
 						);
 					?>
 
-						<button type="button" id="btn-facebook" onclick="checkLoginState();" style="">Logar com Facebook</button>
+						<button type="button" id="btn-facebook" onclick="checkLoginState();" class="btn-facebook"></button>
 
 						<div id="cont-facebook-img" style="<?php echo (!empty($this->request->data['Usuario']['facebook_id']))? '': 'display: none;';?>">
 							<label>Foto do perfil</label>
@@ -99,7 +99,7 @@
 							<?php echo $this->Form->input('repetir_senha', array('type'=> 'password', array('error'=> false))); ?>
 						</div>
 						<div style="width: 100%; clear: both; font-size: 13px; color: #666; margin-bottom: 10px;">
-							Ao clicar em criar conta você estará concordando com os <?php echo $this->Html->link('termos de uso', array('controller'=> 'site', 'action'=> 'termos_de_uso'), array('target'=> '_blank')) ?>.
+							Ao clicar em criar conta você estará concordando com os <?php echo $this->Html->link('Termos De Uso', array('controller'=> 'site', 'action'=> 'termos_de_uso'), array('target'=> '_blank')) ?>.
 						</div>
 						<button type="submit">Criar conta</button>
 					<?php echo $this->Form->end() ?>
@@ -111,20 +111,14 @@
 		</div><!-- main-content-left -->
 
 		<div class="sidebar">
-			<div class="unwrapped">
-				<?php
-					echo $this->Html->image('banners/banner1.jpg', array('url'=>'#', 'width'=> '300px', 'height'=> '420px'));
-				?>
-			</div><!-- unwrapped -->
+			
+			<?php echo $this->element('Site/banner1'); ?>
 
 			<!-- Widget lateral dos estabelecimentos -->
 			<?php echo $this->element('Site/widget_estabelecimentos'); ?>
 
-			<div class="unwrapped">
-				<?php
-					echo $this->Html->image('banners/banner2.png', array('url'=>'#'));
-				?>
-			</div><!-- unwrapped -->
+			<?php echo $this->element('Site/banner2'); ?>
+
 			<div class="unwrapped">
 				<?php
 					echo $this->element('Site/facebook_like_box');

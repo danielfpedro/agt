@@ -68,9 +68,15 @@ class AdminMainMenu extends AppModel {
 			array(
 				'label'=> 'Banners',
 				'url'=> array(
-					'controller'=> 'banners',
+					'controller'=> 'anuncios',
 					'action'=> 'index'),
 				'icon'=> 'picture'),
+			array(
+				'label'=> 'Newsletter',
+				'url'=> array(
+					'controller'=> 'divulgacoes',
+					'action'=> 'index'),
+				'icon'=> 'send'),
 			);
 	}
 

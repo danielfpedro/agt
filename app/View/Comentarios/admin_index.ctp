@@ -53,32 +53,54 @@
 					<?php foreach ($comentarios as $comentario): ?>						
 						<tr>
 							<td>
-								<?php
-									$usuario = $comentario['Usuario']['Perfil']['name'];
+								<div class="media">
+								<div class="pull-left">
+										<?php
+											if (!empty($comentario['Usuario']['Perfil']['imagem'])) {
+												$img_url = ''.
+													'Usuarios/' . 
+													$comentario['Usuario']['id'] .
+													'/' . 
+													$comentario['Usuario']['Perfil']['imagem'];
+											}elseif (!empty($comentario['Usuario']['facebook_id'])) {
+												$img_url = 'https://graph.facebook.com/' .
+													$comentario['Usuario']['facebook_id'].
+													'/picture?type=normal';
+												
+											} else {
+												$img_url = 'Usuarios/default_avatar.png';
+											}
+											echo $this->Html->image($img_url, array('class'=> 'media-object', 'width'=> 60)); ?>
+									</div>
+									<div class="media-body">
+										<?php
+											$usuario = $comentario['Usuario']['Perfil']['name'] . ' ('.$comentario['Usuario']['Perfil']['apelido'].')';
 
-									$estabelecimento = $this->Html->link(
-										$comentario['Estabelecimento']['name'],
-										array(
-											'controller' => 'site',
-											'action' => 'perfil',
-											$comentario['Estabelecimento']['slug'],
-											'admin'=> false
-										),
-										array('target'=> '_blank')
-									);
-									$data = $this->Time->format('d/m/y h:i', $comentario['Comentario']['created']);
-								?>
-								<em class="text-muted">
-									Comentário de "<?php echo $usuario; ?>" feito no perfil de "<?php echo $estabelecimento ?>" dia <?php echo $data; ?>
-								</em>
-								<div
-									style="margin: 2px 0 10px 0;"
-									id="estrelas-readonly"
-									data-score="<?php echo $comentario['Comentario']['rate']; ?>">
+											$estabelecimento = $this->Html->link(
+												$comentario['Estabelecimento']['name'],
+												array(
+													'controller' => 'site',
+													'action' => 'perfil',
+													$comentario['Estabelecimento']['slug'],
+													'admin'=> false
+												),
+												array('target'=> '_blank')
+											);
+											$data = $this->Time->format('d/m/y h:i', $comentario['Comentario']['created']);
+										?>
+										<em class="text-muted">
+											Comentário de "<?php echo $usuario; ?>" feito no perfil de "<?php echo $estabelecimento ?>" dia <?php echo $data; ?>
+										</em>
+										<div
+											style="margin: 2px 0 10px 0;"
+											id="estrelas-readonly"
+											data-score="<?php echo $comentario['Comentario']['rate']; ?>">
+										</div>
+										<p>
+											<?php echo h($comentario['Comentario']['texto']); ?>
+										</p>
+									</div>
 								</div>
-								<p>
-									<?php echo h($comentario['Comentario']['texto']); ?>
-								</p>
 							</td>
 							<td class="text-center" style="width: 80px;">
 								<?php

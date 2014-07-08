@@ -142,6 +142,7 @@ public $layout = 'BootstrapAdmin.default';
 		}
 		$this->Usuario->recursive = 2;
 
+		$options['order'] = array('Usuario.created'=> 'desc');
 		$this->Paginator->settings = $options;
 		$this->set('usuarios', $this->Paginator->paginate());
 	}

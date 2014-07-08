@@ -48,13 +48,19 @@ class Cartao extends AppModel {
 	public function uploadImage($image_array, $w, $h, $pasta_salvar) {
 
 		$image = WideImage::load($image_array['tmp_name']);
-		$extension = pathinfo($image_array['name'], PATHINFO_EXTENSION);
+		$extension = strtolower(pathinfo($image_array['name'], PATHINFO_EXTENSION));
 
-		$new_name = Inflector::slug($this->data['Cartao']['name'], '-') . '.' . $extension;
+		if ($extension == 'jpg' OR $extension == 'jpeg') {
+			$compression = 85;
+		} else {
+			$compression = 8;
+		}
+
+		$new_name = strtolower(Inflector::slug($this->data['Cartao']['name'], '-') . '.' . $extension);
 		$image
 			->resize($w, $h, 'outside')
 			->crop('center', 'center', $w, $h)
-			->saveToFile($pasta_salvar->path . DS . $new_name, 85);
+			->saveToFile($pasta_salvar->path . DS . $new_name, $compression);
 		$this->data['Cartao']['imagem'] = $new_name;
 	}
 
