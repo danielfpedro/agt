@@ -3,6 +3,8 @@ App::uses('AppController', 'Controller');
 
 App::uses('WideImage', 'Lib/WideImage/lib');
 
+App::uses('autoload', 'Lib/Facebook');
+
 
 App::uses('Folder', 'Utility');
 /**
@@ -41,6 +43,29 @@ class SiteController extends AppController {
 		),
 		'Paginator', 'DataUtil');
 
+
+	public function newsletter_add() {
+		$email = $this->request->data['email'];
+		if (!empty($email)) {
+			$this->loadModel('Divulgacao');
+			$options['conditions'] = array('Divulgacao.email'=> $email);
+			$count = $this->Divulgacao->find('count', $options);
+			if ($count == 0) {
+				$this->Divulgacao->create();
+				if ($this->Divulgacao->save(array('email'=> $email))) {
+					echo 'Email salvo com sucesso, você está apto a receber nossas novidades.';
+				} else {;
+					echo 'Ocorreu um erro ao salvar o email.';
+				}
+			} else {
+				echo 'O seu email já constava no nosso banco de dados e está apto para receber nossas novidades.';
+			}
+		} else {
+			echo 'Email não informado.';
+		}
+
+		$this->autoRender = false;
+	}
 
 	public function _getBanners() {
 		$this->loadModel('Anuncio');
@@ -261,7 +286,7 @@ class SiteController extends AppController {
 	}
 
 	public function _getWidgetEstabelecimentos(){
-		// 1 Boate, 2 - Restaurante, 3 - Bar
+		// 1 Baladas, 2 - Restaurante, 3 - Bar
 		$this->loadModel('Estabelecimento');
 		$this->Estabelecimento->CategoriasEstabelecimento->recursive = 3;
 		$query = $this->Estabelecimento->CategoriasEstabelecimento->find(
@@ -269,7 +294,9 @@ class SiteController extends AppController {
 			array(
 				'fields'=> array('CategoriasEstabelecimento.estabelecimento_id'),
 				'recursive'=> -1,
-				'conditions'=> array('CategoriasEstabelecimento.categoria_id'=> 1)));
+				'conditions'=> array('CategoriasEstabelecimento.categoria_id'=> 1),
+			)
+		);
 
 		$idsBoate = $this->_acertaIds($query);
 		$query = $this->Estabelecimento->CategoriasEstabelecimento->find(
@@ -278,6 +305,7 @@ class SiteController extends AppController {
 				'fields'=> array('CategoriasEstabelecimento.estabelecimento_id'),
 				'recursive'=> -1,
 				'conditions'=> array('CategoriasEstabelecimento.categoria_id'=> 2)));
+
 		$idsRestaurante = $this->_acertaIds($query);
 		$query = $this->Estabelecimento->CategoriasEstabelecimento->find(
 			'all',
@@ -301,21 +329,26 @@ class SiteController extends AppController {
 		$options['contain'] = array('Categoria'=> array('imagem'));
 		$options['limit'] = 5;
 
-		$options['conditions'] = array(
-			'Estabelecimento.ativo'=> 1 ,
-			'Estabelecimento.id'=> $idsRestaurante);
+		// $options['conditions'] = array(
+		// 	'Estabelecimento.ativo'=> 1 ,
+		// 	'Estabelecimento.id'=> $idsRestaurante);
 
-		$restaurantes = $this->Estabelecimento->find('all', $options);
+		// $restaurantes = $this->Estabelecimento->find('all', $options);
+		$restaurantes = $this->Estabelecimento->getWidget($idsRestaurante);
 
-		$options['conditions'] = array('Estabelecimento.ativo'=> 1, 'Estabelecimento.id'=> $idsBoate);
-		$baladas = $this->Estabelecimento->find('all', $options);
+		//$options['conditions'] = array('Estabelecimento.ativo'=> 1, 'Estabelecimento.id'=> $idsBoate);
+		//$baladas = $this->Estabelecimento->find('all', $options);
 
-		$options['conditions'] = array('Estabelecimento.ativo'=> 1, 'Estabelecimento.id'=> $idsBar);
-		$bares = $this->Estabelecimento->find('all', $options);
+		$baladas = $this->Estabelecimento->getWidget($idsBoate);
 
-		$options['conditions'] = array('Estabelecimento.ativo'=> 1);
-		$options['order'] = array('Estabelecimento.created'=> 'desc');
-		$recentes = $this->Estabelecimento->find('all', $options);
+		//$options['conditions'] = array('Estabelecimento.ativo'=> 1, 'Estabelecimento.id'=> $idsBar);
+		//$bares = $this->Estabelecimento->find('all', $options);
+		$bares = $this->Estabelecimento->getWidget($idsBar);
+
+		// $options['conditions'] = array('Estabelecimento.ativo'=> 1);
+		// $options['order'] = array('Estabelecimento.created'=> 'desc');
+		// $recentes = $this->Estabelecimento->find('all', $options);
+		$recentes = $this->Estabelecimento->getWidget();
 
 		$options_categoria = array();
 		$options_categoria['fields'] = array('Categoria.imagem');
@@ -344,6 +377,7 @@ class SiteController extends AppController {
 				$i++;
 			}
 		}
+
 		$estabelecimentos['bares'] = $bares;
 
 
@@ -357,11 +391,13 @@ class SiteController extends AppController {
 			}
 		}
 		$estabelecimentos['baladas'] = $baladas;
-		
+
+		// Debugger::dump($recentes);
+		// exit();
 		if (!empty($recentes)) {
 			$i = 0;
 			foreach ($recentes as $key => $value) {
-				$recentes[$i]['Categoria']['imagem'] = $value['Categoria'][0]['imagem'];
+				$recentes[$i]['Categoria']['imagem'] = $value['Categoria']['imagem'];
 				$i++;
 			}
 		}
@@ -423,7 +459,7 @@ class SiteController extends AppController {
 				
 				$this->Comentario->create();
 				if ($this->Comentario->save($this->request->data)) {
-					$this->Session->setFlash(__('O <strong>comentário</strong> foi salvo com sucesso, ele será avaliado pela administração e em breve aparecerá no site.'), 'default', array('class'=> 'alert alert-success'));
+					$this->Session->setFlash(__('Aguarde, seu comentário vai ser avalido.'), 'default', array('class'=> 'alert alert-success'));
 				} else {
 					$this->Session->setFlash(__('O <strong>comentario</strong> não pode ser salvo. Por favor, tente novamente.'), 'default', array('class'=> 'alert alert-danger'));
 				}
@@ -774,7 +810,7 @@ class SiteController extends AppController {
 			$this->request->data['Perfil']['id'] = $this->Auth->user('Perfil.id');
 
 			if ($this->Usuario->saveAll($this->request->data)) {
-				$this->Session->setFlash('As suas alterações foram realizadas com sucesso.', 'default', array('class'=> 'alert alert-success'));
+				$this->Session->setFlash('Alteraçao realizada com sucesso.', 'default', array('class'=> 'alert alert-success'));
 				$this->Auth->login(array(
 					'id'=> $this->Usuario->id,
 					'Perfil'=> array(
@@ -1057,6 +1093,9 @@ class SiteController extends AppController {
 	}
 
 	public function login(){
+
+		//FacebookSession::setDefaultApplication('515451498581874', '70d953834a6ea69e31dbf4443b52ba14');
+
 		$widget_estabelecimentos = $this->_getWidgetEstabelecimentos();
 		$this->set(compact('widget_estabelecimentos'));
 
@@ -1085,5 +1124,84 @@ class SiteController extends AppController {
 	}
 	public function logout(){
 		return $this->redirect($this->Auth->logout());
+	}
+
+	public function resetaSenha(){
+		$email = $this->request->query['email'];
+		$token = $this->request->query['token'];
+
+		if (empty($email) OR empty($token)) {
+			throw new NotFoundException('Url inválida.');
+		}
+
+		$widget_estabelecimentos = $this->_getWidgetEstabelecimentos();
+		$this->set(compact('widget_estabelecimentos'));
+
+		$title_for_layout = 'Resetar Senha - ' . $this->site_name;
+		$this->set(compact('title_for_layout'));
+
+		if ($this->request->is('post')) {
+			$nova_senha = $this->request->data['Usuario']['nova_senha_resetada'];
+			$repetir_nova_senha = $this->request->data['Usuario']['repetir_nova_senha_resetada'];
+
+			if (empty($nova_senha) OR $nova_senha != $repetir_nova_senha){
+				$this->Session->setFlash('Você não confirmou a senha corretamente.', 'default', array('class'=> 'alert alert-danger'));
+			} elseif (strlen($nova_senha) < 6 OR strlen($nova_senha) > 10) {
+				$this->Session->setFlash('A senha deve conter no mínimo 6 e no máximo 10 caracteres.', 'default', array('class'=> 'alert alert-danger'));
+			} else {
+				$this->loadModel('Usuario');
+				$this->Usuario->recursive = -1;
+				$options['conditions'] = array('Usuario.email'=> $email, 'Usuario.token_senha'=> $token);
+
+				$usuario = $this->Usuario->find('first', $options);
+
+				if (empty($usuario)) {
+					$this->Session->setFlash('A combinação do email/token da url é inválida.', 'default', array('class'=> 'alert alert-danger'));
+				} else {
+					$id = $usuario['Usuario']['id'];
+					if ($this->Usuario->save(array('id'=> $id, 'senha'=> $nova_senha, 'token_senha'=> null))) {
+						$this->Session->setFlash('A sua senha foi alterada com sucesso.', 'default', array('class'=> 'alert alert-success'));
+						return $this->redirect(array('controller'=> 'site', 'action'=> 'home'));
+					} else {
+						$this->Session->setFlash('Ocorreu um erro ao tentar alterar a senha.', 'default', array('class'=> 'alert alert-danger'));
+					}
+				}
+			}
+			return $this->redirect(array(
+				'controller'=> 'site',
+				'action'=> 'resetaSenha',
+				'?'=> array('email'=> $email, 'token'=> $token)
+				)
+			);
+		}
+	}
+
+	public function requisitaSenha(){
+		$widget_estabelecimentos = $this->_getWidgetEstabelecimentos();
+		$this->set(compact('widget_estabelecimentos'));
+
+		$title_for_layout = 'Requisição de senha - ' . $this->site_name;
+		$this->set(compact('title_for_layout'));
+
+		if ($this->request->is('post')) {
+			$this->loadModel('Usuario');
+			$this->Usuario->recursive = -1;
+
+			$email = $this->request->data['Usuario']['email'];
+
+			$options['fields'] = array('id');
+			$options['conditions'] = array('Usuario.email'=> $email);
+			$usuario = $this->Usuario->find('first', $options);
+
+			if (!empty($usuario)) {
+				$token = md5(date("Y-m-d H:i:s") . rand(1,10000));
+				if ($this->Usuario->save(array('id'=> $usuario['Usuario']['id'], 'token_senha'=> $token))) {
+					$this->Session->setFlash('As informações para resetar a senha foram enviadas para o email '.$email.'.', 'default', array('class'=> 'alert alert-success'));
+					return $this->redirect(array('controller'=> 'site', 'action'=> 'home'));
+				}
+			} else {
+				$this->Session->setFlash('Não existe nenhum usuário cadastrado com este email.', 'default', array('class'=> 'alert alert-danger'));
+			}
+		}
 	}
 }

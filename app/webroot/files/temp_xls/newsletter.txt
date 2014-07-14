@@ -1,0 +1,1 @@
+<table><tr><td>daniel@gmail.com</td></tr><tr><td>teste@gmail.com</td></tr><tr><td>outro@teste.com</td></tr></table>

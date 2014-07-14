@@ -69,7 +69,7 @@
 													array('escape'=> false, 'class'=> 'post-title'));
 											?>
 											<br>
-											<div id="estrelas-readonly" data-score="<?php echo $item['Estabelecimento']['rate']; ?>"></div>
+											<div id="estrelas-readonly" data-score="<?php echo $item[0]['rate_media']; ?>"></div>
 											<?php echo $item['Estabelecimento']['cidade']; ?>
 										</div>
 										<br class="clearer" /> 

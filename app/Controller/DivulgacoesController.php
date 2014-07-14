@@ -1,5 +1,7 @@
 <?php
 App::uses('AppController', 'Controller');
+App::uses('Folder', 'Utility');
+App::uses('File', 'Utility');
 /**
  * Divulgacoes Controller
  *
@@ -9,6 +11,9 @@ App::uses('AppController', 'Controller');
 class DivulgacoesController extends AppController {
 
 public $layout = 'BootstrapAdmin.default';	
+
+
+
 /**
  * Components
  *
@@ -16,12 +21,36 @@ public $layout = 'BootstrapAdmin.default';
  */
 	public $components = array('Paginator');
 
-/**
- * admin_index method
- *
- * @return void
- */
+	public function admin_export_xls() {
+		$this->Divulgacao->recursive = -1;
+		$options['fields'] = array('email');
+		$emails = $this->Divulgacao->find('all', $options);
+		$content = '<table>';
+
+		foreach ($emails as $email) {
+			$content .= __('<tr><td>%s</td></tr>', $email['Divulgacao']['email']);
+		}
+		$content .= '</table>';
+
+		$file = new File(WWW_ROOT . 'files/temp_xls/newsletter.xls', true, 0644);
+		$file->write($content);
+		
+		//$this->Session->setFlash(__('Arquivo gerado com sucesso.'), 'default', array('class'=> 'alert alert-success'));
+		
+
+		return $this->redirect(array('action'=> 'divulgacoes', 'action'=> 'index', '?'=> array('downloadxls'=> 1)));
+		$this->autoRender = false;
+	}
+
 	public function admin_index() {
+
+		if (!empty($this->request->query['downloadxls'])) {
+			$this->response->file(
+				WWW_ROOT . 'files/temp_xls/newsletter.xls',
+					array('download' => true)
+			);
+		}
+
 		$options = array();
 		if (!empty($this->request->query['q'])) {
 			$q = str_replace(' ', '%', $this->request->query['q']);

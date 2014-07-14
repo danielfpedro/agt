@@ -24,29 +24,49 @@
 							</li>
 						<?php endif ?>
 					</ul>                            
-				</div> 
-			</div>
-			<div id="search" style="">
-
-			<div class="wrapper">
-				<div class="inner">
-					<!-- SEARCH -->  
-					<form method="get" id="searchform" action="<?php echo $this->webroot . "site/pesquisa"; ?>">
-						<input
-							value="<?php echo (!empty($this->request->query['q']))? $this->request->query['q'] : '';?>"
-							type="text" placeholder="pesquisar" name="q" id="s" autocomplete="off" />    
-					</form>
-					</div>
 				</div>
-            </div>
+
+				<div id="newsletter" style="margin-left: 20px;">
+					<div class="wrapper">
+						<div class="inner">
+							<!-- SEARCH -->  
+							<form
+								method="POST"
+								id="newsletterForm"
+								action="<?php echo $this->webroot . "site/newsletter_add"; ?>">
+								<input
+									type="email"
+									placeholder="Cadastre o seu email e receba novidades"
+									name="txt-newsletter"
+									id="n"
+									autocomplete="off" />    
+							</form>
+						</div>
+		            </div>
+				</div>
+
+			</div>
+
+			<div id="search" style="">
+				<div class="wrapper">
+					<div class="inner">
+						<!-- SEARCH -->  
+						<form method="get" id="searchform" action="<?php echo $this->webroot . "site/pesquisa"; ?>">
+							<input
+								value="<?php echo (!empty($this->request->query['q']))? $this->request->query['q'] : '';?>"
+								type="text" placeholder="Pesquisar" name="q" id="s" autocomplete="off" />    
+						</form>
+					</div>
+	            </div>
+			</div>
             
 			<!-- social links -->
-			<div id="top-widget">
-										
-				<div class="top-social">
-					<a href="https://facebook.com/agito.riosul" class="facebook" target="_blank">&nbsp;</a>
+			<div id="top-widget">			
+				<div class="top-social" style="margin-left: 40px;!important;">
+					<a href="https://facebook.com/agito.riosul" class="facebook" target="_blank" >&nbsp;</a>
 				</div>
-			</div>     
+			</div>
+
 			<br class="clearer" />
 		</div>
 	</div>

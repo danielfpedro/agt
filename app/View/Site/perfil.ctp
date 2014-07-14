@@ -224,7 +224,7 @@
 												echo '&nbsp';
 												echo $this->Html->image(
 													'icones_estabelecimentos/area_fumantes.png',
-													array('class'=> 'icon-perfil','width'=> $icon_size, 'title'=> 'Area para fumantes')
+													array('class'=> 'icon-perfil','width'=> $icon_size, 'title'=> 'Área para fumantes')
 												);
 											}
 											if ($estabelecimento['Estabelecimento']['estacionamento']) {

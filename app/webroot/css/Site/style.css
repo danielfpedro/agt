@@ -215,7 +215,7 @@ top bar
 #top-menu ul li ul li.over > a > .sf-sub-indicator {background-position: -10px 0;}
 
 /*top widget */
-#top-widget {float:left;width:70px;height:17px;margin:5px 10px 5px 10px;font-size:.7em;color:#FFF;}
+#top-widget {float:left;height:17px;margin:5px 10px 5px 10px;font-size:.7em;color:#FFF;}
 .top-social .rss {float:left;margin:0px 7px 0px 0px;background:url(images/rss-small.png) no-repeat 0px 0px;width:16px;height:18px;}
 .top-social .facebook {float:left;margin:0px 0px 0px 0px;background:url(images/facebook-small.png) no-repeat 0px 0px;width:16px;height:18px;}
 .top-social .twitter {float:left;margin:0px 0px 0px 0px;background:url(images/twitter-small.png) no-repeat 0px 0px;width:16px;height:18px;}
@@ -224,7 +224,13 @@ top bar
 #search {float:right;}
 #search .wrapper {background:#606971;width:240px;height:27px;}
 #search .inner {background:url(images/search-icon.png) no-repeat right 5px;}
-#search input#s {border:none;background:none;color:#DCE6EE;text-transform:uppercase;font-size:11px;width:196px;padding:7px 30px 7px 12px;}
+#search input#s {border:none;background:none;color:#DCE6EE;text-transform:none;font-size:12px;width:196px;padding:7px 30px 7px 12px;}
+
+/*Newsletter*/
+#newsletter {float:left;}
+#newsletter .wrapper {background:#606971;width:290px;height:27px;}
+#newsletter .inner {background:url(images/envelope-icon.png) no-repeat right 5px;}
+#newsletter input#n {border:none;background:none;color:#DCE6EE;text-transform:none;font-size:12px;width:280px;padding:7px 30px 7px 12px;}
 
 /*************************************************
 header area

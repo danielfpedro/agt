@@ -19,6 +19,19 @@ class Estabelecimento extends AppModel {
 		'rate' => 'SELECT ROUND(AVG(rate), 0) FROM comentarios WHERE estabelecimento_id = Estabelecimento.id AND ativo = 1'
 	);
 
+	public function getWidget($ids = null){
+		if (!empty($ids)) {
+			$ids = join(',', $ids);
+			$sql_ids = 'AND Estabelecimento.id IN ('.$ids.') ';
+		} else {
+			$sql_ids = '';
+		}
+		
+		$query = $this->query('SELECT Estabelecimento.name, Estabelecimento.cidade, Estabelecimento.imagem_70x70, Estabelecimento.slug, Categoria.imagem, ROUND(AVG(Comentario.rate),0) AS rate_media FROM estabelecimentos Estabelecimento LEFT JOIN comentarios Comentario ON (Estabelecimento.id = Comentario.estabelecimento_id AND Comentario.ativo = 1) JOIN categorias_estabelecimentos CategoriasEstabelecimento ON (CategoriasEstabelecimento.estabelecimento_id = Estabelecimento.id) JOIN categorias Categoria ON (Categoria.id = CategoriasEstabelecimento.categoria_id) WHERE Estabelecimento.ativo = 1 '.$sql_ids.'GROUP BY Estabelecimento.id ORDER BY AVG(Comentario.rate) DESC LIMIT 5');
+
+		return $query;
+	}
+
 	public function validationErrorMessage() {
 		$errors = $this->validationErrors;
 

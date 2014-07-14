@@ -9,7 +9,7 @@
 	
 	<div class="well well-sm">
 		<div class="row clearfix">
-			<div class="col-md-12">
+			<div class="col-md-10">
 				<form method="GET" class="form-inline">
 					<input
 						type="text"
@@ -22,6 +22,12 @@
 					</button>
 				</form>
 			</div>
+			<div class="col-md-2">
+				<?php echo $this->Html->link(
+					'Exportar para XLS',
+					array('action'=> 'export_xls'),
+					array('class'=> 'btn btn-info btn-block')) ?>
+			</div>			
 		</div>
 	</div>
 

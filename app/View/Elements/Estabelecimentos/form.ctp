@@ -185,7 +185,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<?php echo $this->Form->input('area_fumantes', array('type'=> 'checkbox')); ?>
+		<?php echo $this->Form->input('area_fumantes', array('label'=> 'Área para fumantes','type'=> 'checkbox')); ?>
 		<?php echo $this->Form->input('ar_livre', array('type'=> 'checkbox')); ?>
 		<?php echo $this->Form->input('ar_condicionado', array('type'=> 'checkbox')); ?>
 		<?php echo $this->Form->input('faz_reserva', array('type'=> 'checkbox')); ?>

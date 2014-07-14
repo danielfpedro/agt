@@ -1,4 +1,5 @@
 <?php echo $this->Html->script('Site/widget_estabelecimentos', array('inline'=> false)); ?>
+<?php echo $this->Html->script('Site/home', array('inline'=> false)); ?>
 <div id="page-wrapper"> <!-- everything below the top menu should be inside the page wrapper div -->
 
 	<div style="margin-top: 10px;">

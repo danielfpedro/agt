@@ -61,9 +61,6 @@
 								'inputDefaults'=> array('label'=> false))
 						);
 					?>
-
-						<button type="button" id="btn-facebook" onclick="checkLoginState();" class="btn-facebook"></button>
-
 						<div id="cont-facebook-img" style="<?php echo (!empty($this->request->data['Usuario']['facebook_id']))? '': 'display: none;';?>">
 							<label>Foto do perfil</label>
 							<img id="imagem-facebook" width="60" <?php echo (empty($this->request->data['Usuario']['facebook_id']))? '': 'src="https://graph.facebook.com/' .$this->request->data['Usuario']['facebook_id']. '/picture?type=normal"';?>>
@@ -96,12 +93,19 @@
 						</div>
 						<div style="width: 50%;float: right">
 							<label>Repetir senha</label>
-							<?php echo $this->Form->input('repetir_senha', array('type'=> 'password', array('error'=> false))); ?>
+							<?php echo $this->Form->input('repetir_senha', array('type'=> 'password', 'error'=> false, 'maxlength'=> 10)); ?>
 						</div>
 						<div style="width: 100%; clear: both; font-size: 13px; color: #666; margin-bottom: 10px;">
-							Ao clicar em criar conta você estará concordando com os <?php echo $this->Html->link('Termos De Uso', array('controller'=> 'site', 'action'=> 'termos_de_uso'), array('target'=> '_blank')) ?>.
+							Ao se cadastrar, você concorda com os <?php echo $this->Html->link('Termos de uso',
+								'/files/termos_de_uso.pdf', array('target'=> '_blank')) ?>.
 						</div>
-						<button type="submit">Criar conta</button>
+						<div style="display: inline;">
+								<button type="submit">Criar conta</button>	
+								<strong style="margin: 0 15px;"> ou </strong>
+								<button type="button" id="btn-facebook" onclick="checkLoginState();" class="btn-facebook">
+								</button>
+						</div>
+						<br style="clear: both;">
 					<?php echo $this->Form->end() ?>
 				</div><!-- wrap-form-contato -->
 

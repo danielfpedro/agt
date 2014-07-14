@@ -2,10 +2,9 @@ button:focus {outline:0;}
 input:focus {outline:0;}
 
 .btn-facebook{
-	margin-bottom: 15px;
 	background-image: url(images/btn_facebook.png);
-	width: 280px;
-	height: 46px;
+	width: 240px;
+	height: 39px;
 	border: 0!important;
 }
 .cont-bolinhas{

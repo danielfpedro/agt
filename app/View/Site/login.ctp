@@ -55,7 +55,12 @@
 						<label>Email</label>
 						<?php echo $this->Form->input('email', array('autofocus'=> true)); ?>
 						<label>Senha</label>
-						<?php echo $this->Form->input('senha', array('type'=> 'password')); ?>
+						<?php echo $this->Form->input('senha', array('type'=> 'password', 'maxlength'=> 10)); ?>
+
+						<div style="width: 100%; clear: both; font-size: 13px; color: #666; margin-top: -10px; margin-bottom: 10px;">
+							<?php echo $this->Html->link('Esqueceu sua senha?',
+								array('controller'=> 'site', 'action'=> 'requisitaSenha')) ?>.
+						</div>
 
 						<div style="margin-bottom: 20px;">
 							<?php echo $this->Session->flash(); ?>
