@@ -3,6 +3,9 @@ App::uses('AppController', 'Controller');
 App::uses('Folder', 'Utility');
 
 App::uses('WideImage', 'Lib/WideImage/lib');
+
+App::uses('CakeTime', 'Utility');
+
 /**
  * Estabelecimentos Controller
  *
@@ -19,11 +22,160 @@ public $layout = 'BootstrapAdmin.default';
  */
 	public $components = array('Paginator', 'DataUtil');
 
-/**
- * admin_index method
- *
- * @return void
- */
+	public function admin_export_xls() {
+		$this->Estabelecimento->recursive = -1;
+		$options = array();
+		$options['contain'] = array(
+			'Cartao',
+			'Subcategoria',
+			'Categoria'=> array('fields'=> 'name'),
+			'Cliente'=> array('fields'=> 'name'));
+
+		$estabelecimentos = $this->Estabelecimento->find('all', $options);
+
+		$content = '<table>';
+
+		$content .= '<thead>';
+			$content .= '<tr>';
+				$content .= '<th>';
+					$content .= 'Categoria';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Cliente';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Nome';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Descrição';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Endereço';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Cidade';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Telefone';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Horario';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Tipo de comida';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Telefone';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Subcategoria';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'site';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Cartões';
+				$content .= '</th>';
+				$content .= '<th>';
+					$content .= 'Data de inauguração';
+				$content .= '</th>';
+				$content .= '<th>';
+				$content .= '</th>';
+			$content .= '</tr>';
+		$content .= '</thead>';
+
+
+		$content .= '<tbody>';
+		foreach ($estabelecimentos as $estabelecimento) {
+			$content .= '<tr>';
+				$content .= '<td>';
+					foreach ($estabelecimento['Categoria'] as $value) {
+						$content .= $value['name'] . ' ';
+					}
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Cliente']['name'];
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Estabelecimento']['name'];
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Estabelecimento']['descricao'];
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Estabelecimento']['endereco'];
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Estabelecimento']['cidade'];
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Estabelecimento']['telefone'];
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Estabelecimento']['horario_funcionamento_inicial'] . ' - ';
+					$content .= $estabelecimento['Estabelecimento']['horario_funcionamento_final'];
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Estabelecimento']['tipo_comida'];
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Estabelecimento']['telefone'];
+				$content .= '</td>';
+				$content .= '<td>';
+					foreach ($estabelecimento['Subcategoria'] as $value) {
+						$content .= $value['name'] . ' ';
+					}
+				$content .= '</td>';
+				$content .= '<td>';
+					$content .= $estabelecimento['Estabelecimento']['site'];
+				$content .= '</td>';
+				$content .= '<td>';
+					foreach ($estabelecimento['Cartao'] as $value) {
+						$content .= $value['name'] . ' ';
+					}
+				$content .= '</td>';
+				$content .= '<td>';
+					if (!empty($estabelecimento['Estabelecimento']['area_fumantes'])) {
+						$content .= 'Área fumantes, ';
+					}
+					if (!empty($estabelecimento['Estabelecimento']['ar_livre'])) {
+						$content .= 'Ar livre, ';
+					}
+					if (!empty($estabelecimento['Estabelecimento']['ar_condicionado'])) {
+						$content .= 'Ar condicionado, ';
+					}
+					if (!empty($estabelecimento['Estabelecimento']['faz_reserva'])) {
+						$content .= 'Faz reserva, ';
+					}
+					if (!empty($estabelecimento['Estabelecimento']['estacionamento'])) {
+						$content .= 'Estacionamento, ';
+					}
+					if (!empty($estabelecimento['Estabelecimento']['faz_entrega'])) {
+						$content .= 'Faz entrega, ';
+					}
+					if (!empty($estabelecimento['Estabelecimento']['wifi'])) {
+						$content .= 'WIFI, ';
+					}
+					if (!empty($estabelecimento['Estabelecimento']['acesso_deficiente'])) {
+						$content .= 'Acesso deficiente, ';
+					}
+				$content .= '</td>';
+				$content .= '<td>';
+					if (!empty($estabelecimento['Estabelecimento']['inaugurado'])) {
+						$content .= CakeTime::format('d/m/Y', $estabelecimento['Estabelecimento']['inaugurado']);
+					}
+				$content .= '</td>';
+			$content .= '</tr>';
+		}
+		$content .= '</tbody>';
+		$content .= '</table>';
+
+
+		$file = new File(WWW_ROOT . 'files/temp_xls/clientes.xls', true, 0644);
+		$file->write($content);
+		return $this->redirect(array('action'=> 'clientes', 'action'=> 'index', '?'=> array('downloadxls'=> 1)));
+	}
+
 
 	public function setCarrossel($id = null, $value = null) {
 		if (is_null($id) OR is_null($value)) {
@@ -37,6 +189,14 @@ public $layout = 'BootstrapAdmin.default';
 	}
 
 	public function admin_index() {
+
+		if (!empty($this->request->query['downloadxls'])) {
+			$this->response->file(
+				WWW_ROOT . 'files/temp_xls/clientes.xls',
+					array('download' => true)
+			);
+		}
+
 		$options = array();
 		if (!empty($this->request->query['q'])) {
 			$q = str_replace(' ', '%', $this->request->query['q']);

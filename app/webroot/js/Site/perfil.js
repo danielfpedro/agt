@@ -1,19 +1,24 @@
 $(function(){
 
 	var foto_atual = 0;
+	var loading = 0;
 
 	$('#nivo-wrap a').each(function(){
-		console.log('Oi');
 	});
 
 	$('div#bolinha').click(function(){
 		var num = $(this).attr('data-rel');
-		trocaFoto(num);
+		if (loading == 0) {
+			trocaFoto(num);	
+		};
+		
 	});
 
 	function trocaFoto (novo) {
-		$('a#foto-troca[data-rel="'+foto_atual+'"]').fadeOut(function(){
-			$('a#foto-troca[data-rel="'+novo+'"]').fadeIn(function(){
+		loading = 1;
+		$('a#foto-troca[data-rel="'+foto_atual+'"]').fadeOut('fast', function(){
+			$('a#foto-troca[data-rel="'+novo+'"]').fadeIn('fast', function(){
+				loading = 0;
 				foto_atual = novo;
 			});
 		});

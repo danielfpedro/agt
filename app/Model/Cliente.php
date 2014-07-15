@@ -8,6 +8,8 @@ App::uses('AppModel', 'Model');
  */
 class Cliente extends AppModel {
 
+	public $actsAs = array('Containable');	
+
 	public function validationErrorMessage() {
 		$errors = $this->validationErrors;
 		$retorno = array();

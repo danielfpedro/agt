@@ -39,6 +39,20 @@
 		var webroot = "<?php echo $this->webroot; ?>";
 		
 		$(function(){
+
+			$('#newsletterForm').submit(function(){
+				var email = $('#n').val();
+				var url = $(this).attr('action');
+
+				$('#n').val('').attr({'disabled': true, 'placeholder': 'Aguarde, salvando email...'});
+					
+				$.post(url, {email: email}, function(data){
+					alert(data);
+					$('#n').attr({'disabled': false, 'placeholder': 'Cadastre o seu email e receba novidades'}).val('').focus();
+				});
+				return false;
+			});
+
 			$('#searchform').submit(function(){
 				if ($('#s').val().length < 3) {
 					alert("A sua busca deve conter no mínimo 3 caracteres.");

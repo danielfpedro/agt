@@ -60,6 +60,7 @@ public $layout = 'BootstrapAdmin.default';
 		}
 		$this->Divulgacao->recursive = 0;
 
+		$options['order'] = array('Divulgacao.created'=> 'desc');
 		$this->Paginator->settings = $options;
 		$this->set('divulgacoes', $this->Paginator->paginate());
 	}

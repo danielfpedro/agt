@@ -27,7 +27,7 @@ class Estabelecimento extends AppModel {
 			$sql_ids = '';
 		}
 		
-		$query = $this->query('SELECT Estabelecimento.name, Estabelecimento.cidade, Estabelecimento.imagem_70x70, Estabelecimento.slug, Categoria.imagem, ROUND(AVG(Comentario.rate),0) AS rate_media FROM estabelecimentos Estabelecimento LEFT JOIN comentarios Comentario ON (Estabelecimento.id = Comentario.estabelecimento_id AND Comentario.ativo = 1) JOIN categorias_estabelecimentos CategoriasEstabelecimento ON (CategoriasEstabelecimento.estabelecimento_id = Estabelecimento.id) JOIN categorias Categoria ON (Categoria.id = CategoriasEstabelecimento.categoria_id) WHERE Estabelecimento.ativo = 1 '.$sql_ids.'GROUP BY Estabelecimento.id ORDER BY AVG(Comentario.rate) DESC LIMIT 5');
+		$query = $this->query('SELECT Estabelecimento.name, Estabelecimento.cidade, Estabelecimento.imagem_70x70, Estabelecimento.slug, Categoria.imagem, ROUND(AVG(Comentario.rate),0) AS rate FROM estabelecimentos Estabelecimento LEFT JOIN comentarios Comentario ON (Estabelecimento.id = Comentario.estabelecimento_id AND Comentario.ativo = 1) JOIN categorias_estabelecimentos CategoriasEstabelecimento ON (CategoriasEstabelecimento.estabelecimento_id = Estabelecimento.id) JOIN categorias Categoria ON (Categoria.id = CategoriasEstabelecimento.categoria_id) WHERE Estabelecimento.ativo = 1 '.$sql_ids.'GROUP BY Estabelecimento.id ORDER BY AVG(Comentario.rate) DESC LIMIT 5');
 
 		return $query;
 	}

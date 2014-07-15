@@ -1,10 +1,18 @@
 <?php
+session_start();
 App::uses('AppController', 'Controller');
 
 App::uses('WideImage', 'Lib/WideImage/lib');
 
-App::uses('autoload', 'Lib/Facebook');
+// App::build(array('Vendor' => array(APP . 'Vendor' . DS . 'Facebook' . DS . 'src' . DS . 'Facebook')));
+// App::uses('FacebookSession', 'Vendor');
 
+// require_once APP . 'Vendor' . DS . 'Facebook' . DS . 'autoload.php';
+// use Facebook\FacebookSession;
+// use Facebook\FacebookRedirectLoginHelper;
+// use Facebook\FacebookRequestException;
+// use Facebook\FacebookRequest;
+// use Facebook\GraphUser;
 
 App::uses('Folder', 'Utility');
 /**
@@ -41,7 +49,7 @@ class SiteController extends AppController {
 				)
 			)
 		),
-		'Paginator', 'DataUtil');
+		'Paginator', 'Session', 'DataUtil');
 
 
 	public function newsletter_add() {
@@ -348,7 +356,16 @@ class SiteController extends AppController {
 		// $options['conditions'] = array('Estabelecimento.ativo'=> 1);
 		// $options['order'] = array('Estabelecimento.created'=> 'desc');
 		// $recentes = $this->Estabelecimento->find('all', $options);
-		$recentes = $this->Estabelecimento->getWidget();
+		$recentes = $this->Estabelecimento->find('all',
+			array(
+				'contain'=> 'Categoria',
+				'conditions'=> array(
+					'Estabelecimento.ativo'=> 1,
+				),
+				'limit'=> 5,
+				'order'=> array('Estabelecimento.created'=> 'desc')
+			)
+		);
 
 		$options_categoria = array();
 		$options_categoria['fields'] = array('Categoria.imagem');
@@ -392,15 +409,17 @@ class SiteController extends AppController {
 		}
 		$estabelecimentos['baladas'] = $baladas;
 
-		// Debugger::dump($recentes);
-		// exit();
 		if (!empty($recentes)) {
 			$i = 0;
 			foreach ($recentes as $key => $value) {
-				$recentes[$i]['Categoria']['imagem'] = $value['Categoria']['imagem'];
+				$recentes[$i]['Categoria']['imagem'] = $value['Categoria'][0]['imagem'];
+				$recentes[$i][0]['rate'] = $value['Estabelecimento']['rate'];
 				$i++;
 			}
 		}
+		// Debugger::dump($recentes);
+		// exit();
+
 		$estabelecimentos['recentes'] = $recentes;
 
 		return $estabelecimentos;
@@ -673,16 +692,7 @@ class SiteController extends AppController {
 		return $retorno;
 	}
 
-	public function _facebookAuth() {
-		//FacebookSession::setDefaultApplication('793395310693484', 'ed977e3decb2df1b8087b77d55046359');
-		// $helper = new FacebookRedirectLoginHelper('your redirect URL here');
-		// $loginUrl = $helper->getLoginUrl();
-		// Debugger::dump($loginUrl);
-		// exit();
-	}
-
 	public function cadastro(){
-		$this->_facebookAuth();
 		$widget_estabelecimentos = $this->_getWidgetEstabelecimentos();
 		$title_for_layout = 'Cadastro de usuário - ' . $this->site_name;
 		
@@ -1092,9 +1102,65 @@ class SiteController extends AppController {
 		
 	}
 
-	public function login(){
+	public function _logarFacebook($email = null, $id = null){
+		// $this->loadModel('Usuario');
+		// $usuario = $this->Usuario->find(
+		// 	'first',
+		// 	array(
+		// 		'Usuario.facebook_id'=> $id,
+		// 		'Usuario.email'=> $email
+		// 	)
+		// );
 
-		//FacebookSession::setDefaultApplication('515451498581874', '70d953834a6ea69e31dbf4443b52ba14');
+		// if (!empty($usuario)) {
+		// 	return true;
+		// } else {
+		// 	return false;
+		// }
+
+	}
+
+	public function facebook_retorno() {
+		FacebookSession::setDefaultApplication('515451498581874', '70d953834a6ea69e31dbf4443b52ba14');
+		$redirect_url = 'http://localhost/agito_v2/site/facebook_retorno';
+		$helper = new FacebookRedirectLoginHelper($redirect_url);
+
+		try {
+		$session = $helper->getSessionFromRedirect();
+		} catch(FacebookRequestException $ex) {
+		// When Facebook returns an error
+			echo 'Facebook retorna erro';
+		} catch(\Exception $ex) {
+		// When validation fails or other local issues
+			echo 'local issue';
+		}
+		if (!empty($session)) {
+			// Logged in
+			try {
+				$user_profile = (new FacebookRequest(
+					$session, 'GET', '/me'))->execute()->getGraphObject(GraphUser::className());
+				
+				$email = $user_profile->getEmail();
+				$id = $user_profile->getId();
+				$this->_logarFacebook($email, $id);
+
+			} catch(FacebookRequestException $e) {
+				echo "Exception occured, code: " . $e->getCode();
+				echo " with message: " . $e->getMessage();
+			}   
+		}
+
+		$this->autoRender = false;
+	}
+
+	public function login(){
+		// FacebookSession::setDefaultApplication('515451498581874', '70d953834a6ea69e31dbf4443b52ba14');
+
+		// $redirect_url = 'http://localhost/agito_v2/site/facebook_retorno';
+
+		// $helper = new FacebookRedirectLoginHelper($redirect_url);
+		// $loginUrl = $helper->getLoginUrl();
+		// $this->set('loginRedirect', $loginUrl);
 
 		$widget_estabelecimentos = $this->_getWidgetEstabelecimentos();
 		$this->set(compact('widget_estabelecimentos'));
