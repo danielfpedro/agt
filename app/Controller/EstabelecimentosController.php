@@ -157,7 +157,7 @@ public $layout = 'BootstrapAdmin.default';
 						$content .= 'WIFI, ';
 					}
 					if (!empty($estabelecimento['Estabelecimento']['acesso_deficiente'])) {
-						$content .= 'Acesso deficiente, ';
+						$content .= 'Acesso deficiente';
 					}
 				$content .= '</td>';
 				$content .= '<td>';
