@@ -39,7 +39,7 @@
 									placeholder="Cadastre o seu email e receba novidades"
 									name="txt-newsletter"
 									id="n"
-									autocomplete="off" />    
+									autocomplete="off" required/>    
 							</form>
 						</div>
 		            </div>

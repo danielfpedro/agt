@@ -63,7 +63,7 @@ class SiteController extends AppController {
 				if ($this->Divulgacao->save(array('email'=> $email))) {
 					echo 'Email salvo com sucesso, você está apto a receber nossas novidades.';
 				} else {;
-					echo 'Ocorreu um erro ao salvar o email.';
+					echo 'Email inválido.';
 				}
 			} else {
 				echo 'O seu email já constava no nosso banco de dados e está apto para receber nossas novidades.';
@@ -257,8 +257,6 @@ class SiteController extends AppController {
 		$title_for_layout = $this->site_name;
 
 		$this->set(compact('carrossel','destaques', 'title_for_layout'));
-
-
 	}
 
 	public $paginate = array(
@@ -358,6 +356,13 @@ class SiteController extends AppController {
 		// $recentes = $this->Estabelecimento->find('all', $options);
 		$recentes = $this->Estabelecimento->find('all',
 			array(
+				'fields'=> array(
+					'name',
+					'rate',
+					'slug',
+					'imagem_70x70',
+					'cidade'
+				),
 				'contain'=> 'Categoria',
 				'conditions'=> array(
 					'Estabelecimento.ativo'=> 1,
@@ -561,6 +566,8 @@ class SiteController extends AppController {
 	}
 
 	public function estabelecimentos($categoria = null){
+		$title_for_layout = ucfirst($categoria) .' - ' . $this->site_name;
+
 		$titulo = $categoria;
 
 		$this->loadModel('Estabelecimento');
@@ -599,11 +606,6 @@ class SiteController extends AppController {
 			}
 
 
-			$title_for_layout = ucfirst($categoria) .' - ' . $this->site_name;
-
-			$this->Paginator->settings = $this->paginate;
-
-
 			$options = array(
 				'order'=> array('Estabelecimento.name'=> 'asc'),
 				'fields'=> array(
@@ -630,6 +632,7 @@ class SiteController extends AppController {
 				$options['conditions'][] = array('Estabelecimento.name LIKE '=> '%'.$q.'%');
 			}
 
+			$this->Paginator->settings = $this->paginate;
 			$this->Paginator->settings = $options;
 
 	    	$estabelecimentos = $this->Paginator->paginate('Estabelecimento');
@@ -1121,36 +1124,36 @@ class SiteController extends AppController {
 	}
 
 	public function facebook_retorno() {
-		FacebookSession::setDefaultApplication('515451498581874', '70d953834a6ea69e31dbf4443b52ba14');
-		$redirect_url = 'http://localhost/agito_v2/site/facebook_retorno';
-		$helper = new FacebookRedirectLoginHelper($redirect_url);
+		// FacebookSession::setDefaultApplication('515451498581874', '70d953834a6ea69e31dbf4443b52ba14');
+		// $redirect_url = 'http://localhost/agito_v2/site/facebook_retorno';
+		// $helper = new FacebookRedirectLoginHelper($redirect_url);
 
-		try {
-		$session = $helper->getSessionFromRedirect();
-		} catch(FacebookRequestException $ex) {
-		// When Facebook returns an error
-			echo 'Facebook retorna erro';
-		} catch(\Exception $ex) {
-		// When validation fails or other local issues
-			echo 'local issue';
-		}
-		if (!empty($session)) {
-			// Logged in
-			try {
-				$user_profile = (new FacebookRequest(
-					$session, 'GET', '/me'))->execute()->getGraphObject(GraphUser::className());
+		// try {
+		// $session = $helper->getSessionFromRedirect();
+		// } catch(FacebookRequestException $ex) {
+		// // When Facebook returns an error
+		// 	echo 'Facebook retorna erro';
+		// } catch(\Exception $ex) {
+		// // When validation fails or other local issues
+		// 	echo 'local issue';
+		// }
+		// if (!empty($session)) {
+		// 	// Logged in
+		// 	try {
+		// 		$user_profile = (new FacebookRequest(
+		// 			$session, 'GET', '/me'))->execute()->getGraphObject(GraphUser::className());
 				
-				$email = $user_profile->getEmail();
-				$id = $user_profile->getId();
-				$this->_logarFacebook($email, $id);
+		// 		$email = $user_profile->getEmail();
+		// 		$id = $user_profile->getId();
+		// 		$this->_logarFacebook($email, $id);
 
-			} catch(FacebookRequestException $e) {
-				echo "Exception occured, code: " . $e->getCode();
-				echo " with message: " . $e->getMessage();
-			}   
-		}
+		// 	} catch(FacebookRequestException $e) {
+		// 		echo "Exception occured, code: " . $e->getCode();
+		// 		echo " with message: " . $e->getMessage();
+		// 	}   
+		// }
 
-		$this->autoRender = false;
+		// $this->autoRender = false;
 	}
 
 	public function login(){
